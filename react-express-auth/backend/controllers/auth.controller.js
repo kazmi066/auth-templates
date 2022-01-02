@@ -13,12 +13,12 @@ const authController = {
 
             const user = await User.findOne({ email });
             if (!user) {
-                return res.status(400).json({ message: "User not found, Please register" });
+                return res.status(400).json({ error: "User not found, Please register" });
             }
 
             const isMatch = bcrypt.compareSync(password, user.password);
             if (!isMatch) {
-                return res.status(400).json({ message: "Invalid password" });
+                return res.status(400).json({ error: "Invalid password" });
             }
 
             const { access_token } = await generateAccessToken(user);
@@ -28,7 +28,15 @@ const authController = {
 
             await refresh_token.save();
 
+            const responseUser = {
+                id: user._id,
+                fullname: user.fullname,
+                email: user.email,
+                role: user.role,
+            }
+
             res.status(200).json({
+                user: responseUser,
                 access_token,
                 refresh_token: refresh_token.token,
             })

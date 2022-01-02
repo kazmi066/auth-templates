@@ -17,7 +17,7 @@ export default function Login() {
     }
     const handleSubmit = (event) => {
         event.preventDefault();
-        login(loginState);
+        login(loginState.email, loginState.password);
     }
 
     return (
@@ -36,6 +36,7 @@ export default function Login() {
                     <input type="submit" />
                 </form>
             )}
+            {error && <p>{error}</p>}
         </section>
     )
 }
