@@ -2,8 +2,8 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const RefreshToken = require('../models/RefreshToken');
 const jwt = require("jsonwebtoken");
-const { generateAccessToken, generateRefreshToken } = require("../helpers/generateTokens");
-const setCookie = require("../helpers/cookieHandler");
+const { generateAccessToken, generateRefreshToken } = require("../helpers/generateTokens.helper");
+const setCookie = require("../helpers/cookie.helper");
 
 const authController = {
     login: async (req, res) => {
