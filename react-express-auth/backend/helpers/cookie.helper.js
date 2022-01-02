@@ -1,6 +1,7 @@
 const setCookie = (res, access_token) => {
     const cookieOptions = {
         httpOnly: true,
+        sameSite: true,
         secure: process.env.NODE_ENV === "production" || false,
         maxAge: process.env.ACCESS_TOKEN_EXPIRES
     }

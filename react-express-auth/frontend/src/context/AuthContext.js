@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { createContext, useState, useEffect, useMemo, useContext } from 'react';
 import AxiosClient from '../axiosClient';
+import cookie from 'js-cookie';
 
 let initialState = {
     user: null,
@@ -9,31 +10,42 @@ let initialState = {
     message: "",
 }
 
-const AuthContext = createContext({ initialState });
+const AuthContext = createContext(initialState);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(initialState.user);
     const [loading, setLoading] = useState(initialState.loading);
     const [error, setError] = useState(initialState.error);
     const [message, setMessage] = useState(initialState.message);
+    const [access_token, setAccessToken] = useState("");
+    const [refresh_token, setRefreshToken] = useState("");
 
-    const login = (email, password) => {
+    const login = async (email, password) => {
         setLoading(true);
-
-        AxiosClient.post('/auth/login', { email, password }, { withCredentials: true }).then((user) => {
-            setUser(user);
-        }).catch(error => {
-            setError(error)
-        }).finally(() => setLoading(false));
+        try {
+            const userData = await AxiosClient.post('/auth/login', { email, password })
+            setUser(userData.data.user);
+            setAccessToken(userData.data.access_token);
+            setRefreshToken(userData.data.refresh_token);
+            setError("")
+            // cookie.set('a_token', userData.data.access_token);
+            // cookie.set('r_token', userData.data.refresh_token);
+        } catch (err) {
+            setError(err.response.data.error)
+        }
+        setLoading(false)
     }
 
-    const register = (fullname, email, password) => {
+    const register = async (fullname, email, password) => {
         setLoading(true);
-        AxiosClient.post('/auth/register', { fullname, email, password }, { withCredentials: true }).then((message) => {
-            setMessage(message);
-        }).catch(error => {
-            setError(error)
-        }).finally(() => setLoading(false));
+        try {
+            const userData = await AxiosClient.post('/auth/register', { fullname, email, password })
+            setMessage(userData.data.message);
+            setError("")
+        } catch (err) {
+            setError(err.response.data.error)
+        }
+        setLoading(false)
     }
 
     const logout = () => {
@@ -45,7 +57,7 @@ export const AuthProvider = ({ children }) => {
         }).finally(() => setLoading(false));
     }
 
-    const momoedValue = useMemo(() => ({
+    const momoedValue = {
         user,
         loading,
         error,
@@ -53,7 +65,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-    }), [user, loading, error, message]);
+    }
 
     return (
         <AuthContext.Provider value={momoedValue}>

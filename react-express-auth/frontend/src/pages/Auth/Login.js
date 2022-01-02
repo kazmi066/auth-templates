@@ -2,7 +2,7 @@ import { useState } from "react";
 import useAuth from "../../context/AuthContext";
 
 export default function Login() {
-    const { login, loading, error } = useAuth();
+    const { login, loading, error, user } = useAuth();
 
     const initialState = {
         email: '',
@@ -15,8 +15,8 @@ export default function Login() {
         const { name, value } = event.target;
         setLoginState({ ...loginState, [name]: value });
     }
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = (e) => {
+        e.preventDefault();
         login(loginState.email, loginState.password);
     }
 
@@ -37,6 +37,7 @@ export default function Login() {
                 </form>
             )}
             {error && <p>{error}</p>}
+            {user && <p>{user.email}</p>}
         </section>
     )
 }
