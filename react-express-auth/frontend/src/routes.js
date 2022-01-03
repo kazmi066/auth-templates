@@ -14,6 +14,7 @@ export default function MyRoutes() {
                     <Route path="login" element={<Login />} />
                     <Route path="register" element={<Register />} />
                 </Route>
+                <Route path="/dashboard" element={<div>Dashboard</div>} />
             </Routes>
         </BrowserRouter>
     )

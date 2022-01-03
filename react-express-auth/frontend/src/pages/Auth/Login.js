@@ -2,7 +2,7 @@ import { useState } from "react";
 import useAuth from "../../context/AuthContext";
 
 export default function Login() {
-    const { login, loading, error, user, logout } = useAuth();
+    const { login, loading, error, user, logout, checkCookie } = useAuth();
 
     const initialState = {
         email: '',
@@ -41,6 +41,7 @@ export default function Login() {
                 <p>{user.email}</p>
                 <button onClick={logout}>Logout</button>
             </>}
+            <button onClick={checkCookie}>Check Cookie</button>
         </section>
     )
 }

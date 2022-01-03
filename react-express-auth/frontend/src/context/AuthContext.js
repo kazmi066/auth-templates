@@ -28,8 +28,6 @@ export const AuthProvider = ({ children }) => {
             setAccessToken(userData.data.access_token);
             setRefreshToken(userData.data.refresh_token);
             setError("")
-            // cookie.set('a_token', userData.data.access_token);
-            // cookie.set('r_token', userData.data.refresh_token);
         } catch (err) {
             setError(err.response.data.error)
         }
@@ -48,25 +46,26 @@ export const AuthProvider = ({ children }) => {
         setLoading(false)
     }
 
-    const logout = () => {
+    const logout = async () => {
         setLoading(true);
-        AxiosClient.get('/auth/logout').then(() => {
+        try {
+            const logoutData = await AxiosClient.get('/auth/logout');
             setUser(null);
-            // remove cookies
-            cookie.remove('access_token');
-            cookie.remove('refresh_token');
-        }).catch(error => {
-            setError(error)
-        }).finally(() => setLoading(false));
+        } catch (err) {
+            setError(err.response.data.error)
+        }
+        setLoading(false)
     }
 
-    const checkCookie = () => {
+    const checkCookie = async () => {
         setLoading(true);
-        AxiosClient.get('/cookies').then(() => {
+        try {
+            const cookieData = await AxiosClient.get('/cookies');
             setUser(null);
-        }).catch(error => {
-            setError(error)
-        }).finally(() => setLoading(false));
+        } catch (err) {
+            setError(err.response.data.error)
+        }
+        setLoading(false)
     }
 
     const momoedValue = {
@@ -77,6 +76,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
+        checkCookie
     }
 
     return (
