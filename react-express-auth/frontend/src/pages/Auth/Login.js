@@ -2,7 +2,7 @@ import { useState } from "react";
 import useAuth from "../../context/AuthContext";
 
 export default function Login() {
-    const { login, loading, error, user } = useAuth();
+    const { login, loading, error, user, logout } = useAuth();
 
     const initialState = {
         email: '',
@@ -37,7 +37,10 @@ export default function Login() {
                 </form>
             )}
             {error && <p>{error}</p>}
-            {user && <p>{user.email}</p>}
+            {user && <>
+                <p>{user.email}</p>
+                <button onClick={logout}>Logout</button>
+            </>}
         </section>
     )
 }

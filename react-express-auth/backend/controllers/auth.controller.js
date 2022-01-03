@@ -94,6 +94,7 @@ const authController = {
                 }
 
                 res.clearCookie("access_token");
+                res.clearCookie("refresh_token");
 
                 return res.status(200).json({
                     message: "Logged out successfully"

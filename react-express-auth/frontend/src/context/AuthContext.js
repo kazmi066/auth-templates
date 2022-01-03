@@ -50,7 +50,19 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         setLoading(true);
-        AxiosClient.get('/auth/logout', { withCredentials: true }).then(() => {
+        AxiosClient.get('/auth/logout').then(() => {
+            setUser(null);
+            // remove cookies
+            cookie.remove('access_token');
+            cookie.remove('refresh_token');
+        }).catch(error => {
+            setError(error)
+        }).finally(() => setLoading(false));
+    }
+
+    const checkCookie = () => {
+        setLoading(true);
+        AxiosClient.get('/cookies').then(() => {
             setUser(null);
         }).catch(error => {
             setError(error)

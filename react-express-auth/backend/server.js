@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/api/auth', require('./routes/auth.route'));
-app.get('/cookies', verifyToken, (req, res) => {
+app.get('/api/cookies', verifyToken, (req, res) => {
     res.send(req.cookies);
 
 })
