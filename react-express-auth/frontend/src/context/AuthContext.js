@@ -1,29 +1,42 @@
-import axios from 'axios';
 import { createContext, useState, useEffect, useMemo, useContext } from 'react';
 import AxiosClient from '../axiosClient';
-import cookie from 'js-cookie';
+import { useLocation } from 'react-router-dom';
 
-let initialState = {
+const initialState = {
     user: null,
     loading: false,
     error: "",
     message: "",
 }
 
-const AuthContext = createContext(initialState);
+const AuthContext = createContext({ initialState });
 
 export const AuthProvider = ({ children }) => {
+    const location = useLocation();
+
+    useEffect(() => {
+        verifyMe();
+    }, [])
+
+    // reset error state on location change
+    useEffect(() => {
+        if (error) setError("");
+    }, [location]);
+
+
     const [user, setUser] = useState(initialState.user);
     const [loading, setLoading] = useState(initialState.loading);
     const [error, setError] = useState(initialState.error);
     const [message, setMessage] = useState(initialState.message);
+
 
     const login = async (email, password) => {
         setLoading(true);
         try {
             const userData = await AxiosClient.post('/auth/login', { email, password })
             setUser(userData.data.user);
-            setError("")
+            setError("");
+            localStorage.setItem('user', JSON.stringify(userData.data.user));
         } catch (err) {
             setError(err.response.data.error)
         }
@@ -47,6 +60,8 @@ export const AuthProvider = ({ children }) => {
         try {
             const logoutData = await AxiosClient.get('/auth/logout');
             setUser(null);
+            setMessage(logoutData.data.message);
+            localStorage.removeItem('user');
         } catch (err) {
             setError(err.response.data.error)
         }
@@ -69,8 +84,11 @@ export const AuthProvider = ({ children }) => {
         try {
             const verifyData = await AxiosClient.get('/auth/verifyMe');
             setUser(verifyData.data.user);
+            localStorage.setItem('user', JSON.stringify(verifyData.data.user));
         } catch (err) {
-            setError(err.response.data.error)
+            // do nothing
+            setUser(null);
+            localStorage.removeItem('user');
         }
         setLoading(false)
     }

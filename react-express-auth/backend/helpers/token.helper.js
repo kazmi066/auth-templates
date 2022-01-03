@@ -28,17 +28,19 @@ const generateRefreshToken = (user) => {
 
 }
 
-const verifyValidToken = async (token) => {
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-        if (err) {
-            throw new Error("Invalid token");
+const verifyValidToken = (token) => {
+    const tokenData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    return new Promise((resolve, reject) => {
+        if (tokenData) {
+            const user = {
+                id: tokenData.id,
+                email: tokenData.email,
+                role: tokenData.role
+            }
+            return resolve(user);
+        } else {
+            reject({ error: "Invalid token" });
         }
-        const user = {
-            id: decoded.id,
-            email: decoded.email,
-            role: decoded.role
-        }
-        return user;
     })
 }
 

@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../../context/AuthContext";
 
 export default function Login() {
-    const { login, loading, error, user, logout, checkCookie } = useAuth();
+    const { login, loading, error, user, logout, checkCookie, message } = useAuth();
+    const navigate = useNavigate();
 
     const initialState = {
         email: '',
         password: '',
     }
+
+    useEffect(() => {
+        if (user) {
+            navigate('/')
+        }
+    }, [user])
 
     const [loginState, setLoginState] = useState(initialState);
 
@@ -42,6 +49,7 @@ export default function Login() {
                 <p>{user.email}</p>
                 <button onClick={logout}>Logout</button>
             </>}
+            {message && <p>{message}</p>}
             <button onClick={checkCookie}>Check Cookie</button>
         </section>
     )

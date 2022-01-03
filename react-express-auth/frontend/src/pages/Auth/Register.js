@@ -1,14 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../../context/AuthContext";
 
 export default function Register() {
-    const { register, loading, error, message } = useAuth();
+    const { user, register, loading, error, message } = useAuth();
+    const navigate = useNavigate();
 
     const initialState = {
         fullname: "",
         email: '',
         password: '',
     }
+
+    useEffect(() => {
+        if (user) {
+            navigate('/')
+        }
+    }, [])
 
     const [registerState, setRegisterState] = useState(initialState);
 
