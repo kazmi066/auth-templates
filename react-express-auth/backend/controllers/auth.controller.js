@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const RefreshToken = require('../models/RefreshToken');
 const jwt = require("jsonwebtoken");
 const { generateAccessToken, generateRefreshToken } = require("../helpers/generateTokens.helper");
-const setCookie = require("../helpers/cookie.helper");
+const { setAccessCookie, setRefreshCookie } = require("../helpers/cookie.helper");
 
 const authController = {
     login: async (req, res) => {
@@ -24,7 +24,8 @@ const authController = {
             const { access_token } = await generateAccessToken(user);
             const refresh_token = generateRefreshToken(user);
 
-            setCookie(res, access_token);
+            setAccessCookie(res, access_token);
+            setRefreshCookie(res, refresh_token);
 
             await refresh_token.save();
 
