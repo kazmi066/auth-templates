@@ -2,7 +2,7 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const RefreshToken = require('../models/RefreshToken');
 const jwt = require("jsonwebtoken");
-const { generateAccessToken, generateRefreshToken } = require("../helpers/generateTokens.helper");
+const { generateAccessToken, generateRefreshToken } = require("../helpers/token.helper");
 const { setAccessCookie, setRefreshCookie } = require("../helpers/cookie.helper");
 
 const authController = {
@@ -12,18 +12,14 @@ const authController = {
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ error: 'Not logged In' });
-            }
+        try {
+            const response = verifyValidToken(token)
+            return res.status(200).json({ user: response });
+        }
+        catch (err) {
+            return res.status(401).json({ error: err });
+        }
 
-            req.user = {
-                id: decoded.id,
-                email: decoded.email,
-                role: decoded.role
-            };
-            next();
-        })
     },
 
     login: async (req, res) => {
@@ -140,7 +136,8 @@ const authController = {
         // generate new access token
         const { access_token } = await generateAccessToken(user);
 
-        setCookie(res, access_token);
+        setAccessCookie(res, access_token);
+        setRefreshCookie(res, newRefreshToken.token);
 
         // Also remove the old refresh token
         await RefreshToken.deleteOne({ _id: refToken._id });

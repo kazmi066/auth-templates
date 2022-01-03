@@ -17,28 +17,12 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(initialState.loading);
     const [error, setError] = useState(initialState.error);
     const [message, setMessage] = useState(initialState.message);
-    const [access_token, setAccessToken] = useState("");
-    const [refresh_token, setRefreshToken] = useState("");
-
-    useEffect(() => {
-        console.log(cookie.get());
-        const token = cookie.get("access_token");
-        const refresh_token = cookie.get("refresh_token");
-        if (token) {
-            setAccessToken(token);
-        }
-        if (refresh_token) {
-            setRefreshToken(refresh_token);
-        }
-    })
 
     const login = async (email, password) => {
         setLoading(true);
         try {
             const userData = await AxiosClient.post('/auth/login', { email, password })
             setUser(userData.data.user);
-            setAccessToken(userData.data.access_token);
-            setRefreshToken(userData.data.refresh_token);
             setError("")
         } catch (err) {
             setError(err.response.data.error)
@@ -80,6 +64,28 @@ export const AuthProvider = ({ children }) => {
         setLoading(false)
     }
 
+    const verifyMe = async () => {
+        setLoading(true);
+        try {
+            const verifyData = await AxiosClient.get('/auth/verifyMe');
+            setUser(verifyData.data.user);
+        } catch (err) {
+            setError(err.response.data.error)
+        }
+        setLoading(false)
+    }
+
+    const refreshAccess = async () => {
+        setLoading(true);
+        try {
+            const refreshData = await AxiosClient.get('/auth/refreshtoken');
+            setUser(refreshData.data.user);
+        } catch (err) {
+            setError(err.response.data.error)
+        }
+        setLoading(false)
+    }
+
     const momoedValue = {
         user,
         loading,
@@ -88,7 +94,8 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        checkCookie
+        checkCookie,
+        verifyMe
     }
 
     return (

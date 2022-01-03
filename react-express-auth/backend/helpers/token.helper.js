@@ -28,4 +28,18 @@ const generateRefreshToken = (user) => {
 
 }
 
-module.exports = { generateAccessToken, generateRefreshToken };
+const verifyValidToken = async (token) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            throw new Error("Invalid token");
+        }
+        const user = {
+            id: decoded.id,
+            email: decoded.email,
+            role: decoded.role
+        }
+        return user;
+    })
+}
+
+module.exports = { generateAccessToken, generateRefreshToken, verifyValidToken };
