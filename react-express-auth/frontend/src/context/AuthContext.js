@@ -20,6 +20,18 @@ export const AuthProvider = ({ children }) => {
     const [access_token, setAccessToken] = useState("");
     const [refresh_token, setRefreshToken] = useState("");
 
+    useEffect(() => {
+        console.log(cookie.get());
+        const token = cookie.get("access_token");
+        const refresh_token = cookie.get("refresh_token");
+        if (token) {
+            setAccessToken(token);
+        }
+        if (refresh_token) {
+            setRefreshToken(refresh_token);
+        }
+    })
+
     const login = async (email, password) => {
         setLoading(true);
         try {

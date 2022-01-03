@@ -3,8 +3,11 @@ import Home from './pages/Home/Home';
 import About from './pages/About/About';
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import Dashboard from './pages/Dashboard/Dashboard';
+import PrivateRoute from "./PrivateRoute";
 
 export default function MyRoutes() {
+
     return (
         <BrowserRouter>
             <Routes>
@@ -14,7 +17,9 @@ export default function MyRoutes() {
                     <Route path="login" element={<Login />} />
                     <Route path="register" element={<Register />} />
                 </Route>
-                <Route path="/dashboard" element={<div>Dashboard</div>} />
+                <Route path="/dashboard" element={<PrivateRoute />}>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                </Route>
             </Routes>
         </BrowserRouter>
     )

@@ -6,6 +6,26 @@ const { generateAccessToken, generateRefreshToken } = require("../helpers/genera
 const { setAccessCookie, setRefreshCookie } = require("../helpers/cookie.helper");
 
 const authController = {
+    verifyMe: async (req, res) => {
+        const token = req.cookies.access_token || null;
+        if (!token) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+            if (err) {
+                return res.status(401).json({ error: 'Not logged In' });
+            }
+
+            req.user = {
+                id: decoded.id,
+                email: decoded.email,
+                role: decoded.role
+            };
+            next();
+        })
+    },
+
     login: async (req, res) => {
         const { email, password } = req.body;
 
@@ -25,7 +45,7 @@ const authController = {
             const refresh_token = generateRefreshToken(user);
 
             setAccessCookie(res, access_token);
-            setRefreshCookie(res, refresh_token);
+            setRefreshCookie(res, refresh_token.token);
 
             await refresh_token.save();
 
