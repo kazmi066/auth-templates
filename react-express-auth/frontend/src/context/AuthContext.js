@@ -94,17 +94,6 @@ export const AuthProvider = ({ children }) => {
         setLoading(false)
     }
 
-    const refreshAccess = async () => {
-        setLoading(true);
-        try {
-            const refreshData = await AxiosClient.get('/auth/refreshtoken');
-            setUser(refreshData.data.user);
-        } catch (err) {
-            setError(err.response.data.error)
-        }
-        setLoading(false)
-    }
-
     const momoedValue = {
         user,
         loading,
