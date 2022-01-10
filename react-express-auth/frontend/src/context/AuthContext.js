@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     // reset error state on location change
     useEffect(() => {
         if (error) setError("");
-    }, [location]);
+    }, [location.pathname]);
 
 
     const [user, setUser] = useState(initialState.user);
@@ -62,6 +62,7 @@ export const AuthProvider = ({ children }) => {
             setUser(null);
             setMessage(logoutData.data.message);
             localStorage.removeItem('user');
+            setError("");
         } catch (err) {
             setError(err.response.data.error)
         }
@@ -86,7 +87,6 @@ export const AuthProvider = ({ children }) => {
             setUser(verifyData.data.user);
             localStorage.setItem('user', JSON.stringify(verifyData.data.user));
         } catch (err) {
-            // do nothing
             setUser(null);
             localStorage.removeItem('user');
         }

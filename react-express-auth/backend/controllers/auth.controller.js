@@ -8,7 +8,7 @@ const { setAccessCookie, setRefreshCookie } = require("../helpers/cookie.helper"
 const authController = {
     verifyMe: async (req, res) => {
         const token = req.cookies.access_token || null;
-        if (!token) {
+        if (!token && !req.cookies.refresh_token) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
         try {
@@ -118,7 +118,7 @@ const authController = {
         })
     },
     generateAccessToken: async (req, res) => {
-        const { refresh_token } = req.body;
+        const { refresh_token } = req.cookies;
 
         const refToken = await RefreshToken.findOne({ token: refresh_token })
 
@@ -141,7 +141,14 @@ const authController = {
         // Also remove the old refresh token
         await RefreshToken.deleteOne({ _id: refToken._id });
 
+        const userData = {
+            id: user._id,
+            email: user.email,
+            role: user.role,
+        }
+
         return res.status(200).json({
+            user: userData,
             access_token,
             refresh_token: newRefreshToken.token,
         })

@@ -8,8 +8,6 @@ import PrivateRoute from "./PrivateRoute";
 import useAuth from "./context/AuthContext";
 
 export default function MyRoutes() {
-    const navigate = useNavigate();
-    const { user } = useAuth();
     return (
         <Routes>
             <Route path="/" element={<Home />} />
