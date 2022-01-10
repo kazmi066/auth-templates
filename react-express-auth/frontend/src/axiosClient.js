@@ -4,20 +4,18 @@ const instance = axios.create({
     withCredentials: true
 })
 
-axios.interceptors.response.use((response) => {
+instance.interceptors.response.use((response) => {
     return response;
 }, (error) => {
     if (error.response && error.response.status === 401 && error.config) {
-        localStorage.removeItem('user');
         instance.get('/auth/refresh').then((response) => {
             if (response) {
-                console.log("response", response);
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 return instance(error.config);
             }
         }).catch((err) => {
             localStorage.removeItem('user');
-            return Promise.reject(error);
+            return Promise.reject(err);
         })
     }
 })
