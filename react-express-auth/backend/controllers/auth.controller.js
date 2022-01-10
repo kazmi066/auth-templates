@@ -2,7 +2,7 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const RefreshToken = require('../models/RefreshToken');
 const jwt = require("jsonwebtoken");
-const { generateAccessToken, generateRefreshToken, verifyValidToken } = require("../helpers/token.helper");
+const { generateAccessToken, generateRefreshToken, verifyAccessToken } = require("../helpers/token.helper");
 const { setAccessCookie, setRefreshCookie } = require("../helpers/cookie.helper");
 
 const authController = {
@@ -12,7 +12,7 @@ const authController = {
             return res.status(401).json({ error: 'Unauthorized' });
         }
         try {
-            const response = await verifyValidToken(token);
+            const response = await verifyAccessToken(token);
             return res.status(200).json({ user: response });
         }
         catch (err) {

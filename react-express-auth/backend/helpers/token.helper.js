@@ -28,7 +28,7 @@ const generateRefreshToken = (user) => {
 
 }
 
-const verifyValidToken = (token) => {
+const verifyAccessToken = (token) => {
     const tokenData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     return new Promise((resolve, reject) => {
         if (tokenData) {
@@ -44,4 +44,4 @@ const verifyValidToken = (token) => {
     })
 }
 
-module.exports = { generateAccessToken, generateRefreshToken, verifyValidToken };
+module.exports = { generateAccessToken, generateRefreshToken, verifyAccessToken };
