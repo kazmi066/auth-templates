@@ -50,6 +50,7 @@ export const AuthProvider = ({ children }) => {
             setMessage(userData.data.message);
             setError("")
         } catch (err) {
+            setMessage("");
             setError(err.response.data.error)
         }
         setLoading(false)

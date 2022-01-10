@@ -7,17 +7,24 @@ const instance = axios.create({
 instance.interceptors.response.use((response) => {
     return response;
 }, (error) => {
-    if (error.response && error.response.status === 401 && error.config) {
-        instance.get('/auth/refresh').then((response) => {
+    if (error && error.response && error.response.status === 401 && error.config && error.response.data.error.name === "JsonWebTokenError") {
+        instance.get('/auth/refresh').then(async (response) => {
             if (response) {
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-                return instance(error.config);
+                try {
+                    const verifiedData = await instance.get('/auth/verifyMe');
+                    localStorage.setItem('user', JSON.stringify(verifiedData.data.user));
+                }
+                catch (err) {
+                    localStorage.removeItem('user');
+                    return Promise.reject(err);
+                }
             }
         }).catch((err) => {
             localStorage.removeItem('user');
             return Promise.reject(err);
         })
     }
+    return Promise.reject(error);
 })
 
 export default instance;

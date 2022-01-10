@@ -85,9 +85,7 @@ const authController = {
                 message: "User created successfully"
             })
         } catch (err) {
-            res.status(400).json({
-                error: err
-            });
+            res.status(500).json({ error: err.message });
         }
 
     },
@@ -95,7 +93,7 @@ const authController = {
         const access_token = req.cookies.access_token;
 
         if (!access_token) {
-            res.status(400).json({ error: "Not logged in" });
+            return res.status(400).json({ error: "Not logged in" });
         }
 
         jwt.verify(access_token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
@@ -126,7 +124,11 @@ const authController = {
             return res.status(403).json({ error: "Invalid token, Login Again" });
         }
 
-        const { user } = refToken;
+        const user = {
+            _id: refToken.user,
+            email: refToken.email,
+            role: refToken.role,
+        }
 
         // Replace old refresh token with a new one and save
         const newRefreshToken = generateRefreshToken(user);
@@ -141,14 +143,7 @@ const authController = {
         // Also remove the old refresh token
         await RefreshToken.deleteOne({ _id: refToken._id });
 
-        const userData = {
-            id: user._id,
-            email: user.email,
-            role: user.role,
-        }
-
         return res.status(200).json({
-            user: userData,
             access_token,
             refresh_token: newRefreshToken.token,
         })

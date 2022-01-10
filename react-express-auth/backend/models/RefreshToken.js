@@ -6,6 +6,15 @@ const RefreshTokenSchema = new schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
+    email: {
+        type: String,
+        required: true,
+    },
+    role: {
+        type: String,
+        required: true,
+        enum: ['admin', 'user']
+    },
     token: String,
     expires: Date,
 })

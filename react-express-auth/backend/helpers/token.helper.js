@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const RefreshToken = require('../models/RefreshToken');
 
 const generateAccessToken = async (user) => {
+    console.log("Generate access token", user);
     const access_token = jwt.sign({
         id: user._id,
         email: user.email,
@@ -22,6 +23,8 @@ const generateAccessToken = async (user) => {
 const generateRefreshToken = (user) => {
     return new RefreshToken({
         user: user._id,
+        email: user.email,
+        role: user.role,
         token: crypto.randomBytes(40).toString('hex'),
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),      // 7 days
     })

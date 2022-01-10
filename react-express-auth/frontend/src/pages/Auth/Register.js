@@ -16,7 +16,7 @@ export default function Register() {
         if (user) {
             navigate('/')
         }
-    }, [])
+    }, [user])
 
     const [registerState, setRegisterState] = useState(initialState);
 
