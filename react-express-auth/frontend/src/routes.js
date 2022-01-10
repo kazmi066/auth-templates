@@ -5,7 +5,6 @@ import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Dashboard from './pages/Dashboard/Dashboard';
 import PrivateRoute from "./PrivateRoute";
-import useAuth from "./context/AuthContext";
 
 export default function MyRoutes() {
     return (
