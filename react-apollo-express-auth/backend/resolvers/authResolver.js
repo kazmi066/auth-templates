@@ -5,23 +5,25 @@ const { ForbiddenError } = require("apollo-server-express");
 
 module.exports = {
   Mutation: {
-    // Register Resolver
-    async register(root, { name, email, password }, { models, user }) {
+    async register(root, { name, email, password }, { models }) {
       try {
-        const user = await models.User.findOne({ where: { email } });
+        const user = await models.User.findOne({ email });
 
         if (user) {
           throw new Error("User already registered");
         }
 
-        const result = await models.User.create({
+        await new models.User({
           name,
           email,
           password: await bcrypt.hash(password, 10),
-          role: "User",
-        });
+          role: "user",
+        }).save()
 
-        return result;
+        return {
+          message: 'User registered successfully',
+        }
+
       } catch (error) {
         throw new Error(error.message);
       }

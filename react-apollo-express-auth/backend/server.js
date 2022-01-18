@@ -3,7 +3,7 @@ const cors = require("cors");
 const _ = require('lodash');
 const { ApolloServer } = require("apollo-server-express");
 require("dotenv").config();
-require("./connection");
+const models = require('./models')
 const authResolver = require("./resolvers/authResolver");
 const typedefs = require("./schema");
 
@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 5000;
 
 (async () => {
   const server = new ApolloServer({
+    models,
     typeDefs: typedefs,
     resolvers: _.merge(
       authResolver
@@ -18,6 +19,7 @@ const PORT = process.env.PORT || 5000;
     context: ({ req, res }) => {
       const user = req.user || null;
       return {
+        models,
         user
       };
     },
