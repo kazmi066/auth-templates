@@ -2,6 +2,7 @@ const dotenv = require("dotenv");
 const sql = require("mysql");
 dotenv.config();
 
+// For SQL connection
 const sqlConnection = () => {
   const connection = sql.createConnection({
     host: "localhost",

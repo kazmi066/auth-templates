@@ -30,7 +30,7 @@ const PORT = process.env.PORT || 5000;
   app.use(cors());
 
   // HTTP Routes
-  app.use("/api/emails", require("./routes/notifier"));
+  app.use("/api/something", require("./routes/something.route"));
 
   await server.start();
   server.applyMiddleware({ app });
