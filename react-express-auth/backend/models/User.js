@@ -19,9 +19,16 @@ const userSchema = new schema({
     role: {
         type: String,
         required: true,
-        enum: ['admin', 'user']
+        enum: ['admin', 'user'],
+        default: 'user'
     }
 })
+
+userSchema.statics.isEmailExists = async function (email) {
+    const user = await this.findOne({ email });
+    if (user) return true;
+    return false;
+}
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

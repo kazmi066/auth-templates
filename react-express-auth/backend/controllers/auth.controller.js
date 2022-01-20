@@ -1,9 +1,11 @@
-const User = require("../models/user");
+const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const RefreshToken = require('../models/RefreshToken');
 const jwt = require("jsonwebtoken");
 const { generateAccessToken, generateRefreshToken, verifyAccessToken } = require("../helpers/token.helper");
 const { setAccessCookie, setRefreshCookie } = require("../helpers/cookie.helper");
+const catchAsync = require('../utils/catchAsync');
+const { userService, authService } = require("../services");
 
 const authController = {
     verifyMe: async (req, res) => {
@@ -21,74 +23,32 @@ const authController = {
 
     },
 
-    login: async (req, res) => {
+    /**
+     * 
+     * @param {email} valid email 
+     * @param {password} must be at least 6 characters long 
+     * @returns {access_token, refresh_token}
+     */
+
+    login: catchAsync(async (req, res) => {
         const { email, password } = req.body;
+        const loginData = await authService.attemptLogin(res, email, password);
+        return res.status(200).json(loginData);
+    }),
 
-        try {
+    /**
+     * 
+     * @param {name} name of the user
+     * @param {email} valid email
+     * @param {password} must be at least 6 characters long
+     * @returns {message} user created successfully
+     */
 
-            const user = await User.findOne({ email });
-            if (!user) {
-                return res.status(400).json({ error: "User not found, Please register" });
-            }
+    register: catchAsync(async (req, res) => {
+        const user = await userService.createUser(req.body);
+        res.status(201).json({ message: "User created successfully" })
+    }),
 
-            const isMatch = bcrypt.compareSync(password, user.password);
-            if (!isMatch) {
-                return res.status(400).json({ error: "Invalid password" });
-            }
-
-            const { access_token } = await generateAccessToken(user);
-            const refresh_token = generateRefreshToken(user);
-
-            setAccessCookie(res, access_token);
-            setRefreshCookie(res, refresh_token.token);
-
-            await refresh_token.save();
-
-            const responseUser = {
-                id: user._id,
-                fullname: user.fullname,
-                email: user.email,
-                role: user.role,
-            }
-
-            res.status(200).json({
-                user: responseUser,
-                access_token,
-                refresh_token: refresh_token.token,
-            })
-
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-
-
-    },
-    register: async (req, res) => {
-        const { fullname, email, password } = req.body;
-
-        const alreadyExists = await User.findOne({ email });
-
-        if (alreadyExists) {
-            return res.status(400).send({ error: "User already exists" });
-        }
-
-        const user = new User({
-            fullname,
-            email,
-            password: bcrypt.hashSync(password, 10),
-            role: 'user'
-        })
-
-        try {
-            await user.save();
-            return res.status(200).json({
-                message: "User created successfully"
-            })
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-
-    },
     logout: (req, res) => {
         const access_token = req.cookies.access_token;
 

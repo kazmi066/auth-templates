@@ -3,7 +3,6 @@ const crypto = require('crypto');
 const RefreshToken = require('../models/RefreshToken');
 
 const generateAccessToken = async (user) => {
-    console.log("Generate access token", user);
     const access_token = jwt.sign({
         id: user._id,
         email: user.email,
@@ -14,7 +13,7 @@ const generateAccessToken = async (user) => {
 
     return new Promise((resolve, reject) => {
         if (access_token) {
-            resolve({ access_token });
+            resolve(access_token);
         }
         reject({ error: "Error generating tokens" });
     })

@@ -30,6 +30,14 @@ app.use(cookieParser());
 // Routes
 app.use('/api/v1', require('./routes'));
 
+app.use((err, req, res, next) => {
+    let { statusCode, message } = err;
+    if (!statusCode)
+        statusCode = 500;
+    const response = { message }
+    res.status(statusCode).send(response);
+});
+
 app.listen(4000, () => {
     console.log('Server is running on port 4000');
 })
