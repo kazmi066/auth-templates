@@ -5,7 +5,7 @@ const ApiError = require("../utils/ApiError");
 const createUser = async (reqBody) => {
     const isEmailExists = await User.isEmailExists(reqBody.email);
     if (isEmailExists) throw new ApiError(401, "Email already exists");
-    User.create(reqBody);
+    return User.create(reqBody);
 }
 
 const getUserByEmail = async (email) => {
@@ -14,7 +14,7 @@ const getUserByEmail = async (email) => {
 
 const comparePassword = (password, userPassword) => {
     const passwordCheck = bcryptjs.compareSync(password, userPassword);
-    if (!passwordCheck) throw new Error("Invalid password");
+    if (!passwordCheck) throw new ApiError(401, "Invalid password");
     return true;
 }
 

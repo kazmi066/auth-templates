@@ -32,11 +32,15 @@ app.use('/api/v1', require('./routes'));
 
 app.use((err, req, res, next) => {
     let { statusCode, message } = err;
-    if (!statusCode)
-        statusCode = 500;
-    const response = { message }
-    res.status(statusCode).send(response);
+    if (!statusCode) statusCode = 500;
+    const response = { error: message }
+    res.status(statusCode).json(response);
 });
+
+process.on('unhandledRejection', (err) => {
+    console.error('Unhandled Rejection', err.stack);
+    process.exit(1);
+})
 
 app.listen(4000, () => {
     console.log('Server is running on port 4000');

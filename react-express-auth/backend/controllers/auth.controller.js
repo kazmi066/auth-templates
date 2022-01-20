@@ -1,11 +1,8 @@
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
 const RefreshToken = require('../models/RefreshToken');
-const jwt = require("jsonwebtoken");
 const { generateAccessToken, generateRefreshToken, verifyAccessToken } = require("../helpers/token.helper");
-const { setAccessCookie, setRefreshCookie } = require("../helpers/cookie.helper");
 const catchAsync = require('../utils/catchAsync');
 const { userService, authService } = require("../services");
+const ApiError = require("../utils/ApiError");
 
 const authController = {
     verifyMe: async (req, res) => {
@@ -27,8 +24,8 @@ const authController = {
      * 
      * @param {email} valid email 
      * @param {password} must be at least 6 characters long 
-     * @returns {access_token, refresh_token}
-     */
+     * @returns {user, access_token, refresh_token}
+    */
 
     login: catchAsync(async (req, res) => {
         const { email, password } = req.body;
@@ -42,73 +39,38 @@ const authController = {
      * @param {email} valid email
      * @param {password} must be at least 6 characters long
      * @returns {message} user created successfully
-     */
+    */
 
     register: catchAsync(async (req, res) => {
         const user = await userService.createUser(req.body);
-        res.status(201).json({ message: "User created successfully" })
+        return res.status(200).json({ message: "User created successfully" })
     }),
 
-    logout: (req, res) => {
-        const access_token = req.cookies.access_token;
+    /**
+     * 
+     * @param {access_token} valid access_token
+     * @returns {message} user logged out successfully
+    */
 
-        if (!access_token) {
-            return res.status(400).json({ error: "Not logged in" });
-        }
+    logout: catchAsync(async (req, res) => {
+        const token = req.cookies.access_token;
+        if (!token) throw new ApiError(401, "Invalid Token, Please login again");
+        await authService.logout(res, token);
+        return res.status(200).json({ message: 'Logged out successfully' });
+    }),
 
-        jwt.verify(access_token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ error: 'Not logged in' });
-            }
-
-            RefreshToken.findOneAndDelete({ user: decoded.id }, (err, refreshToken) => {
-                if (err) {
-                    return res.status(400).json({ error: err.message });
-                }
-
-                res.clearCookie("access_token");
-                res.clearCookie("refresh_token");
-
-                return res.status(200).json({
-                    message: "Logged out successfully"
-                })
-            })
-        })
-    },
-    generateAccessToken: async (req, res) => {
+    /**
+     * 
+     * @param {refresh_token} valid refresh_token
+     * @returns {access_token, refresh_token}
+    */
+    generateAccessToken: catchAsync(async (req, res) => {
         const { refresh_token } = req.cookies;
-
         const refToken = await RefreshToken.findOne({ token: refresh_token })
-
-        if (!refToken) {
-            return res.status(403).json({ error: "Invalid token, Login Again" });
-        }
-
-        const user = {
-            _id: refToken.user,
-            email: refToken.email,
-            role: refToken.role,
-        }
-
-        // Replace old refresh token with a new one and save
-        const newRefreshToken = generateRefreshToken(user);
-        await newRefreshToken.save();
-
-        // generate new access token
-        const { access_token } = await generateAccessToken(user);
-
-        setAccessCookie(res, access_token);
-        setRefreshCookie(res, newRefreshToken.token);
-
-        // Also remove the old refresh token
-        await RefreshToken.deleteOne({ _id: refToken._id });
-
-        return res.status(200).json({
-            access_token,
-            refresh_token: newRefreshToken.token,
-        })
-
-    }
+        if (!refToken) throw new ApiError(400, "Invalid Token, Please login again");
+        const { access_token, refresh_token: latestRefreshToken } = await authService.generateNewAccessToken(res, refToken);
+        return res.status(200).json({ access_token, refresh_token: latestRefreshToken });
+    })
 }
 
 module.exports = authController;
