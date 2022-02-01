@@ -27,23 +27,6 @@ const generateRefreshToken = (user) => {
         token: crypto.randomBytes(40).toString('hex'),
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),      // 7 days
     })
-
 }
 
-const verifyAccessToken = (token) => {
-    const tokenData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    return new Promise((resolve, reject) => {
-        if (tokenData) {
-            const user = {
-                id: tokenData.id,
-                email: tokenData.email,
-                role: tokenData.role
-            }
-            return resolve(user);
-        } else {
-            reject({ error: "Invalid token" });
-        }
-    })
-}
-
-module.exports = { generateAccessToken, generateRefreshToken, verifyAccessToken };
+module.exports = { generateAccessToken, generateRefreshToken };

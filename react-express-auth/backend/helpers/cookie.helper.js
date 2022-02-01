@@ -22,4 +22,9 @@ const setRefreshCookie = (res, refresh_token) => {
     res.cookie("refresh_token", refresh_token, cookieOptions)
 }
 
-module.exports = { setAccessCookie, setRefreshCookie };
+const clearCookies = (res) => {
+    res.clearCookie("access_token");
+    res.clearCookie("refresh_token");
+}
+
+module.exports = { setAccessCookie, setRefreshCookie, clearCookies };
