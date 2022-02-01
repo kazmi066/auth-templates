@@ -11,7 +11,7 @@ instance.interceptors.response.use((response) => {
         instance.get('/auth/refresh').then(async (response) => {
             if (response) {
                 try {
-                    const verifiedData = await instance.get('/auth/verifyMe');
+                    const verifiedData = await instance.get('/auth/verifyme');
                     localStorage.setItem('user', JSON.stringify(verifiedData.data.user));
                 }
                 catch (err) {

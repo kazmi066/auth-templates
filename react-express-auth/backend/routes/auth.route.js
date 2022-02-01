@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.post('/login', authController.login);
 router.post('/register', authController.register);
-router.get('/verifyMe', authController.verifyMe);
+router.get('/verifyme', authController.verifyMe);
 router.get('/logout', authController.logout);
 router.get('/refresh', authController.generateAccessToken);
 
