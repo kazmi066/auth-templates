@@ -63,7 +63,7 @@ const generateNewAccessToken = async (res, refToken) => {
 
   // Replace old refresh token with a new one and save
   const newRefreshToken = generateRefreshToken(user);
-  console.log(newRefreshToken.isExpired);
+  if(newRefreshToken.isExpired) throw new ApiError(401, "Invalid Token, Please login again");
   await newRefreshToken.save();
 
   // generate new access token
