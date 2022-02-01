@@ -1,5 +1,5 @@
 const RefreshToken = require('../models/RefreshToken');
-const { generateAccessToken, generateRefreshToken, verifyAccessToken } = require("../helpers/token.helper");
+const { verifyAccessToken } = require("../helpers/token.helper");
 const catchAsync = require('../utils/catchAsync');
 const { userService, authService } = require("../services");
 const ApiError = require("../utils/ApiError");
@@ -38,7 +38,7 @@ const authController = {
      * @param {name} name of the user
      * @param {email} valid email
      * @param {password} must be at least 6 characters long
-     * @returns {message} user created successfully
+     * @returns {message}
     */
 
     register: catchAsync(async (req, res) => {
@@ -48,8 +48,8 @@ const authController = {
 
     /**
      * 
-     * @param {access_token} valid access_token
-     * @returns {message} user logged out successfully
+     * @param {access_token}
+     * @returns {message}
     */
 
     logout: catchAsync(async (req, res) => {
@@ -61,7 +61,7 @@ const authController = {
 
     /**
      * 
-     * @param {refresh_token} valid refresh_token
+     * @param {refresh_token}
      * @returns {access_token, refresh_token}
     */
     generateAccessToken: catchAsync(async (req, res) => {

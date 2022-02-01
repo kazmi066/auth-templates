@@ -55,13 +55,13 @@ const generateNewAccessToken = async (res, refToken) => {
     await newRefreshToken.save();
 
     // generate new access token
-    const { access_token } = await generateAccessToken(user);
+    const access_token = await generateAccessToken(user);
 
     setAccessCookie(res, access_token);
     setRefreshCookie(res, newRefreshToken.token);
 
     // Also remove the old refresh token
-    RefreshToken.deleteOne({ _id: refToken._id });
+    await RefreshToken.deleteOne({ _id: refToken._id });
 
     return { access_token, refresh_token: newRefreshToken.token }
 }
