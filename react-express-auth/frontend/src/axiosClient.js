@@ -8,7 +8,7 @@ const instance = axios.create({
 });
 
 const AxiosClient = ({ children }) => {
-  const { setUser, setLoading } = useAuth();
+  const { setUser, verifyMe } = useAuth();
 
   useMemo(() => {
     instance.interceptors.response.use(
@@ -25,18 +25,9 @@ const AxiosClient = ({ children }) => {
         ) {
           instance
             .get("/auth/refresh")
-            .then(async (response) => {
-              if (response) {
-                try {
-                  setLoading(true);
-                  const verifiedData = await instance.get("/auth/verifyme");
-                  setUser(verifiedData.data.user);
-                  setLoading(false);
-                } catch (err) {
-                  setUser(null);
-                  return Promise.reject(err);
-                }
-              }
+            .then(async () => {
+              const verifiedData = await verifyMe();
+              setUser(verifiedData.data.user);
             })
             .catch((err) => {
               return Promise.reject(err);

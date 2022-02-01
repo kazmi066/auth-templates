@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
   const checkCookie = async () => {
     setLoading(true);
     try {
-      const cookieData = await AxiosClient.get("/cookies");
+      await AxiosClient.get("/cookies");
       setUser(null);
     } catch (err) {
       setError(err.response.data.error);
@@ -90,10 +90,8 @@ export const AuthProvider = ({ children }) => {
     try {
       const verifyData = await AxiosClient.get("/auth/verifyMe");
       setUser(verifyData.data.user);
-      // localStorage.setItem('user', JSON.stringify(verifyData.data.user));
     } catch (err) {
       setUser(null);
-      localStorage.removeItem("user");
     }
     setLoading(false);
   };
