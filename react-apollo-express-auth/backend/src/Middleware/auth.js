@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import { verify } from "jsonwebtoken";
 
 const auth = (req, res, next) => {
   if (typeof req.headers.authorization !== "string") {
@@ -8,7 +8,7 @@ const auth = (req, res, next) => {
   const header = req.headers.authorization;
   const token = header.replace("Bearer ", "");
   try {
-    const jwtData = jwt.verify(token, process.env.JWT_SECRET);
+    const jwtData = verify(token, process.env.JWT_SECRET);
     if (jwtData && jwtData.user) {
       req.user = jwtData.user;
     } else {
@@ -20,4 +20,4 @@ const auth = (req, res, next) => {
   return next();
 };
 
-module.exports = auth;
+export default auth;

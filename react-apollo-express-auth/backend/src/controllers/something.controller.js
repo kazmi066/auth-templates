@@ -5,4 +5,4 @@ const somethingController = {
 }
 
 
-module.exports = somethingController;
+export default somethingController;

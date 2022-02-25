@@ -1,10 +1,10 @@
-const dotenv = require("dotenv");
-const sql = require("mysql");
-dotenv.config();
+import { config } from "dotenv";
+import { createConnection } from "mysql";
+config();
 
 // For SQL connection
 const sqlConnection = () => {
-  const connection = sql.createConnection({
+  const connection = createConnection({
     host: "localhost",
     user: "root",
     password: "root",
@@ -21,4 +21,4 @@ const sqlConnection = () => {
   return connection;
 };
 
-module.exports = sqlConnection;
+export default sqlConnection;
