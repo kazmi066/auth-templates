@@ -1,8 +1,9 @@
 import express from "express";
 import cors from "cors";
 import _ from "lodash";
-import { ApolloServer } from "apollo-server-express";
+import { ApolloServer, AuthenticationError } from "apollo-server-express";
 import 'dotenv/config';
+import jwt from "jsonwebtoken";
 import morgan from "morgan";
 import models, {connectDB} from './models/index.js';
 import schema from './schema/index.js';
@@ -11,17 +12,40 @@ import something from './routes/something.route.js';
 
 const PORT = process.env.PORT || 5000;
 
+const getMe = async req => {
+  const token = req.headers['x-token'];
+
+  if (token) {
+    try {
+      return await jwt.verify(token, process.env.JWT_SECRET);
+    } catch (e) {
+      throw new AuthenticationError(
+        'Your session expired. Sign in again.',
+      );
+    }
+  }
+};
+
 (async () => {
   connectDB();
   const server = new ApolloServer({
     typeDefs: schema,
     resolvers,
-    context: ({ req, res }) => {
-      const user = req.user || null;
-      return {
-        models,
-        user
-      };
+    context: async ({ req, res }) => {
+      if(req) {
+        const me = await getMe(req);
+        return {
+          models,
+          me,
+          req,
+          res
+        };
+      }
+      else{
+        return {
+          models
+        };
+      }
     },
   });
 

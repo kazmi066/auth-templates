@@ -10,7 +10,6 @@ export default gql `
     username: String!
     email: String!
     role: String
-    messages: [Message!]
   }
 
   type Message{
@@ -18,7 +17,7 @@ export default gql `
   }
   
   type Query {
-    users: [User!]
+    getUsers: [User]
     user(id: ID!): User
     me: User
     logout: Message
@@ -32,7 +31,7 @@ export default gql `
     ): Message!
 
     signIn(email: String!, password: String!): Token!
-    updateUser(username: String!): User!
+    updateUser(username: String, password: String): User!
     deleteUser(id: ID!): Boolean!
   }
 

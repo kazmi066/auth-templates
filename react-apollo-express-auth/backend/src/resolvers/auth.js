@@ -1,11 +1,17 @@
 import {UserInputError, AuthenticationError} from 'apollo-server-express';
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
+
+const createToken = (user, secret, expiresIn) => {
+  const { id, username, email, role } = user;
+  return jwt.sign({ id, username, email, role }, secret, {
+    expiresIn: expiresIn
+  });
+}
 
 export default {
   Query: {
     // logout Resolver
     async logout(parent, args, { res }) {
-      // res.clearCookie("refreshtoken");
       return {
         message: "Logged out successfully",
       };
@@ -19,7 +25,7 @@ export default {
           const user = await models.User.findByEmail(email);
 
           if (user) {
-            throw new Error("User already registered");
+            throw new UserInputError("User already registered with these credentials");
           }
 
           await models.User.create({
@@ -53,14 +59,7 @@ export default {
           throw new AuthenticationError('Invalid password.');
         }
 
-        const token = jwt.sign({ 
-          id: user._id, 
-          email: user.email, 
-          username: user.username, 
-          role: user.role 
-         }, process.env.JWT_SECRET, {
-          expiresIn: '1h'
-         })
+        const token = createToken(user, process.env.JWT_SECRET, '30h');
 
         return { token };
 
