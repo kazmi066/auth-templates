@@ -5,6 +5,7 @@ import { ApolloServer, AuthenticationError } from "apollo-server-express";
 import 'dotenv/config';
 import jwt from "jsonwebtoken";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import models, {connectDB} from './models/index.js';
 import schema from './schema/index.js';
 import resolvers from "./resolvers/index.js";
@@ -53,7 +54,14 @@ const getMe = async req => {
 
   // Middlewares
   app.use(express.json()); // bodyparser
-  app.use(cors());
+  app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true
+  }));
+  app.use(cookieParser({
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+  }));
   app.use(morgan("dev"));
 
   // HTTP Routes
