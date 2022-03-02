@@ -12,6 +12,7 @@ export default {
   Query: {
     // logout Resolver
     async logout(parent, args, { res }) {
+      res.clearCookie("token");
       return {
         message: "Logged out successfully",
       };

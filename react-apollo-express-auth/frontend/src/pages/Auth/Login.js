@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useMutation } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import { SIGN_IN } from "../../graphql/mutations";
+import { LOGOUT } from "../../graphql/queries";
 
 export default function Login() {
     const initialState = {
@@ -8,6 +9,7 @@ export default function Login() {
         password: '',
     }
 
+    const [logoutUser, { data: logoutMessage, loading2, erro2 }] = useLazyQuery(LOGOUT)
     const [loginUser, { data, loading, error }] = useMutation(SIGN_IN);
 
     const [loginState, setLoginState] = useState(initialState);
@@ -23,6 +25,7 @@ export default function Login() {
     }
 
     const handleLogout = () => {
+        logoutUser();
     }
 
     return (
@@ -45,6 +48,7 @@ export default function Login() {
             <button onClick={handleLogout}>
                 Logout
             </button>
+            {logoutMessage && <p>{logoutMessage.logout.message}</p>}
         </section>
     )
 }

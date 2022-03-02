@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const getUsers = gql `
+export const GET_USERS = gql `
     query getUsers{
         getUsers{
             id
@@ -11,8 +11,8 @@ export const getUsers = gql `
     }
 `
 
-export const logout = gql `
-    mutation logout{
+export const LOGOUT = gql `
+    query logout{
         message
     }
 `
