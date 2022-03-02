@@ -1,16 +1,22 @@
-## Authentication boilerplates
+## Monolith Authentication boilerplates
 ### Introduction
 Production ready boilerplates for MERN or Graphql Based Projects.
 
 ### Context
-  - Understandable structure
-  - Http-only cookies (Access X Refresh Tokens)
-  - JWT
+  - Authentication with JWT and http-only cookies method.
+  - Access and refresh token functionality for MERN projects.
+  - No styles for LOGIN and REGISTER page (Can be styled according to need)
 
-### # React-express
-Boilerplate for React, Node, Express & MongoDB.
+## # React-express
 
-### # Apollo-React-express
-Boilerplate for React, Node, Apollo-GraphQL & MongoDB+SQL.
+### stack being used:
+  - express
+  - React
+  - Mongodb
 
+## # Apollo-React-express
 
+### stack being used:
+  - apollo-server-express
+  - express
+  - Mongodb
