@@ -9,16 +9,6 @@ const createToken = (user, secret, expiresIn) => {
 }
 
 export default {
-  Query: {
-    // logout Resolver
-    async logout(parent, args, { res }) {
-      res.clearCookie("token");
-      return {
-        message: "Logged out successfully",
-      };
-    },
-  } , 
-  
   Mutation: {
       // Register User Resolver
       async signUp(parent, { username, email, password }, { models }) {
@@ -65,7 +55,7 @@ export default {
         res.cookie('token', token, {
           maxAge: 1000 * 60 * 60 * 24 * 30,     // 30 days
         })
-        
+
         return { token };
 
       } catch (error) {
@@ -73,5 +63,14 @@ export default {
       }
     },
 
+    // Logout Resolver
+    async logout(parent, args, { res }) {
+      res.cookie('token', "", {
+        maxAge: -1,
+      });
+      return {
+        message: "Logged out successfully",
+      };
+    },
   }
 };

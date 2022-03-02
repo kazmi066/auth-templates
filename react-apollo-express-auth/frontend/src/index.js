@@ -7,7 +7,18 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
 const client = new ApolloClient({
   uri: 'http://localhost:5000/graphql',
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  request: operation => {
+    operation.setContext({
+        credentials: 'include',
+    });
+  },
+  response: operation => {
+    const token = operation.getContext().token;
+    if (token) {
+      localStorage.setItem('token', token);
+    }
+  }
 });
 
 ReactDOM.render(

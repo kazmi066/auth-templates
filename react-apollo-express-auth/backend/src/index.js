@@ -44,7 +44,9 @@ const getMe = async req => {
       }
       else{
         return {
-          models
+          models,
+          req,
+          res
         };
       }
     },
@@ -54,18 +56,23 @@ const getMe = async req => {
 
   // Middlewares
   app.use(express.json()); // bodyparser
-  app.use(cors());
+  app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }));
   app.use(cookieParser({
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
+    sameSite: false,
   }));
   app.use(morgan("dev"));
+  app.set('trust proxy', 1);
 
   // HTTP Routes
   app.use("/api/something", something);
 
   await server.start();
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app, path: "/graphql", cors: false });
 
   app.listen(PORT, () =>
     console.log(

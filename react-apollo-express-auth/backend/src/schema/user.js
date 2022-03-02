@@ -20,7 +20,6 @@ export default gql `
     getUsers: [User]
     user(id: ID!): User
     me: User
-    logout: Message
   }
   
   type Mutation {
@@ -33,6 +32,7 @@ export default gql `
     signIn(email: String!, password: String!): Token!
     updateUser(username: String, password: String): User!
     deleteUser(id: ID!): Boolean!
+    logout: Message
   }
 
 `;
