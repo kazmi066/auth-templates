@@ -14,10 +14,6 @@ const AuthContext = createContext({ initialState });
 export const AuthProvider = ({ children }) => {
     const location = useLocation();
 
-    useEffect(() => {
-        verifyMe();
-    }, [])
-
     // reset error state on location change
     useEffect(() => {
         if (error) setError("");
@@ -43,10 +39,10 @@ export const AuthProvider = ({ children }) => {
         setLoading(false)
     }
 
-    const register = async (fullname, email, password) => {
+    const register = async (username, email, password) => {
         setLoading(true);
         try {
-            const userData = await AxiosClient.post('/auth/register', { fullname, email, password })
+            const userData = await AxiosClient.post('/auth/register', { username, email, password })
             setMessage(userData.data.message);
             setError("")
         } catch (err) {
@@ -64,17 +60,6 @@ export const AuthProvider = ({ children }) => {
             setMessage(logoutData.data.message);
             localStorage.removeItem('user');
             setError("");
-        } catch (err) {
-            setError(err.response.data.error)
-        }
-        setLoading(false)
-    }
-
-    const checkCookie = async () => {
-        setLoading(true);
-        try {
-            const cookieData = await AxiosClient.get('/cookies');
-            setUser(null);
         } catch (err) {
             setError(err.response.data.error)
         }
@@ -102,7 +87,6 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
-        checkCookie,
         verifyMe
     }
 

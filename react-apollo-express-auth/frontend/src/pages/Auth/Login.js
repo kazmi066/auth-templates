@@ -1,21 +1,14 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import useAuth from "../../context/AuthContext";
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { SIGN_IN } from "../../graphql/mutations";
 
 export default function Login() {
-    const { login, loading, error, user, logout, checkCookie, message } = useAuth();
-    const navigate = useNavigate();
-
     const initialState = {
         email: '',
         password: '',
     }
 
-    useEffect(() => {
-        if (user) {
-            navigate('/')
-        }
-    }, [user])
+    const [loginUser, { data, loading, error }] = useMutation(SIGN_IN);
 
     const [loginState, setLoginState] = useState(initialState);
 
@@ -23,9 +16,13 @@ export default function Login() {
         const { name, value } = event.target;
         setLoginState({ ...loginState, [name]: value });
     }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        login(loginState.email, loginState.password);
+        loginUser({ variables: loginState });
+    }
+
+    const handleLogout = () => {
     }
 
     return (
@@ -44,13 +41,10 @@ export default function Login() {
                     <input type="submit" />
                 </form>
             )}
-            {error && <p>{error}</p>}
-            {user && <>
-                <p>{user.email}</p>
-                <button onClick={logout}>Logout</button>
-            </>}
-            {message && <p>{message}</p>}
-            <button onClick={checkCookie}>Check Cookie</button>
+            {error && <p>{error.message}</p>}
+            <button onClick={handleLogout}>
+                Logout
+            </button>
         </section>
     )
 }

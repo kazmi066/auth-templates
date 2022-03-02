@@ -54,10 +54,7 @@ const getMe = async req => {
 
   // Middlewares
   app.use(express.json()); // bodyparser
-  app.use(cors({
-    origin: "http://localhost:3000",
-    credentials: true
-  }));
+  app.use(cors());
   app.use(cookieParser({
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
