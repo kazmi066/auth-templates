@@ -11,7 +11,7 @@ Production ready boilerplates for MERN or Graphql Based Projects.
 
 ### stack being used:
   - express
-  - React
+  - React / context-api
   - Mongodb
 
 ## # Apollo-React-express
