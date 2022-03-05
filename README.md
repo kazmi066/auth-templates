@@ -1,4 +1,4 @@
-## Monolith Authentication boilerplates
+## Authentication boilerplates for monolith codebase
 ### Introduction
 Production ready boilerplates for MERN or Graphql Based Projects.
 
